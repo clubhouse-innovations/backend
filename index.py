@@ -8,7 +8,7 @@ def convert_time_delta(td):
 
 client = speech.SpeechClient()
 
-speech_file = "./test.wav"
+speech_file = "./clubhouse_chat.wav"
 
 f = sf.SoundFile(speech_file)
 print('samples = {}'.format(len(f)))
@@ -42,38 +42,36 @@ response = client.recognize(config=config, audio=audio)
 confidence_value = float(response.results[0].alternatives[0].confidence)
 
 print("response list:")
-# response_list_1 = response.results[-1].alternatives[0].words
-# speaker_set_1 = set()
-# prev_speaker_1 = response_list_1[0].speaker_tag
-# speaker_dict_1 = {}
-# speaker_start_time = response_list_1[0].start_time.total_seconds()
-# speaker_end_time = response_list_1[0].end_time.total_seconds()
-# speaker_set_1.add(prev_speaker_1)
-# print(response_list_1[0].start_time.total_seconds())
-# print(response_list_1[0].end_time.total_seconds())
-# for i,val in enumerate(response_list_1):
-# 	if i == 0:
-# 		continue
-# 	if val.speaker_tag not in speaker_set_1:
-# 		speaker_set_1.add(val.speaker_tag)
+response_list_1 = response.results[-1].alternatives[0].words
+speaker_set_1 = set()
+prev_speaker_1 = response_list_1[0].speaker_tag
+speaker_dict_1 = {}
+speaker_start_time = response_list_1[0].start_time.total_seconds()
+speaker_end_time = response_list_1[0].end_time.total_seconds()
+speaker_set_1.add(prev_speaker_1)
+for i,val in enumerate(response_list_1):
+	if i == 0:
+		continue
+	if val.speaker_tag not in speaker_set_1:
+		speaker_set_1.add(val.speaker_tag)
 
-# 	if prev_speaker_1 != val.speaker_tag:
-# 		if prev_speaker_1 not in speaker_dict_1:
-# 			speaker_dict_1[prev_speaker_1] = [(speaker_start_time,speaker_end_time)]
-# 		else:
-# 			speaker_dict_1[prev_speaker_1].append((speaker_start_time,speaker_end_time))
-# 		prev_speaker_1 = val.speaker_tag
-# 		speaker_start_time = val.start_time.total_seconds()
+	if prev_speaker_1 != val.speaker_tag:
+		if prev_speaker_1 not in speaker_dict_1:
+			speaker_dict_1[prev_speaker_1] = [(speaker_start_time,speaker_end_time)]
+		else:
+			speaker_dict_1[prev_speaker_1].append((speaker_start_time,speaker_end_time))
+		prev_speaker_1 = val.speaker_tag
+		speaker_start_time = val.start_time.total_seconds()
 
-# 	elif i == len(response_list_1)-1:
-# 		if prev_speaker_1 not in speaker_dict_1:
-# 			final_end_time = val.end_time.total_seconds()
-# 			speaker_dict_1[prev_speaker_1] = [(speaker_start_time,final_end_time)]
-# 		else:
-# 			final_end_time = val.end_time.total_seconds()
-# 			speaker_dict_1[prev_speaker_1].append((speaker_start_time,final_end_time))
-# 	else:
-# 		speaker_end_time = val.end_time.total_seconds()
+	elif i == len(response_list_1)-1:
+		if prev_speaker_1 not in speaker_dict_1:
+			final_end_time = val.end_time.total_seconds()
+			speaker_dict_1[prev_speaker_1] = [(speaker_start_time,final_end_time)]
+		else:
+			final_end_time = val.end_time.total_seconds()
+			speaker_dict_1[prev_speaker_1].append((speaker_start_time,final_end_time))
+	else:
+		speaker_end_time = val.end_time.total_seconds()
 
 
 
