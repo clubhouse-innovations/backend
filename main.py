@@ -31,7 +31,7 @@ def extract_doc_api():
         upload_transcription(f'{email}_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', trans_results)
     except Exception as ex:
         print(f'Error while processing request [{ex}]')
-        return http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return "General error. We're about to fire someone.", 500
 
     return 'OK'
 
