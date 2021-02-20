@@ -17,7 +17,7 @@ cors = CORS(app)
 
 
 def run_app():
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
 
 
 @app.route('/process-recording', methods=['POST'])
