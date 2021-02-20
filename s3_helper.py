@@ -18,17 +18,22 @@ def upload_to_s3(data, dir_name, file_name, extension, is_public=False):
         print(f'Error when uploading {file_name}. Error [{ex}]')
 
 
-def upload_transcription(session_name, transcription_results: TranscriptionResult):
+def upload_transcription(session_name, transcription_results: TranscriptionResult, rec_file_name):
     upload_to_s3(transcription_results.full_text, session_name, 'full_text', 'txt', True)
     upload_to_s3(transcription_results.speakers_json, session_name, 'transcription_speakers', 'json', True)
+    upload_to_s3(open(rec_file_name, 'rb').read(), session_name, 'recording', 'wav', True)
 
 
-def read_session_files():
+def read_session_files(filter_phrase=None):
     s3 = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
     bucket = s3.Bucket(S3_DOCS_BUCKET)
     sessions = {}
+
     for key in bucket.objects.all():
         file_name = key.key
+        if filter_phrase and filter_phrase not in file_name:
+            continue
+
         sessions_id = file_name.split('/')[0]
         if sessions_id not in sessions:
             sessions[sessions_id] = {}
@@ -37,5 +42,7 @@ def read_session_files():
             sessions[sessions_id]['full_text'] = key.get()['Body'].read().decode('utf-8')
         elif 'transcription_speakers' in file_name:
             sessions[sessions_id]['transcription_speakers'] = key.get()['Body'].read().decode('utf-8')
+        elif 'recording' in file_name:
+            sessions[sessions_id]['recording_url'] = f'https://{S3_DOCS_BUCKET}.s3.amazonaws.com/{file_name}'
 
     return sessions

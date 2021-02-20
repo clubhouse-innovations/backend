@@ -1,11 +1,12 @@
-import http
 import json
-from datetime import datetime
+import os
+import uuid
 
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
-from s3_helper import upload_transcription, read_session_files
+from email_sender import send_email
+from s3_helper import read_session_files, upload_transcription
 from transcribe import transcribe_rev_ai
 
 app = Flask(__name__)
@@ -23,17 +24,23 @@ def run_app():
 
 @app.route('/process-recording', methods=['POST'])
 @cross_origin(allow_headers=['Content-Type'])
-def extract_doc_api():
+def process_recording():
+    session_id = str(uuid.uuid4())
+    temp_rec_file_name = f'{session_id}.wav'
     try:
         recording_file = request.files['recording_file']
-        email = request.form['email_address']
-        print(f'Got a new request for email {email}')
-        trans_results = transcribe_rev_ai(recording_file)
-        upload_transcription(f'{email}_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', trans_results)
+        email = request.form['email']
+        print(f'Got a new request for email {email}. Assigned {session_id} as the session id')
+        recording_file.save(temp_rec_file_name)
+        trans_results = transcribe_rev_ai(temp_rec_file_name)
+        upload_transcription(session_id, trans_results, temp_rec_file_name)
     except Exception as ex:
+        os.remove(temp_rec_file_name)
         print(f'Error while processing request [{ex}]')
         return "General error. We're about to fire someone.", 500
 
+    os.remove(temp_rec_file_name)
+    send_email(email, session_id)
     print(f'Finished processing request for {email}')
     return 'OK'
 
@@ -43,6 +50,14 @@ def extract_doc_api():
 def get_data():
     sessions = read_session_files()
     return json.dumps(sessions)
+
+
+@app.route('/get-session-data', methods=['GET'])
+@cross_origin(allow_headers=['Content-Type'])
+def get_data_for_session():
+    session_id = request.args.get('session_id')
+    session = read_session_files(session_id)
+    return json.dumps(session[session_id])
 
 
 if __name__ == "__main__":
