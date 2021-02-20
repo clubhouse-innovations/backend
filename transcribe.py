@@ -33,9 +33,9 @@ def wait_for_job_finish(client, job_id):
 
 def transcribe_rev_ai(file_obj) -> Optional[TranscriptionResult]:
     client = RevAiAPIClient(settings.REV_AI_ACCESS_KEY)
-    temp_file_name = str(uuid.uuid4())
+    temp_file_name = f'{str(uuid.uuid4())}.wav'
     try:
-        file_obj.save(f'{temp_file_name}.wav')
+        file_obj.save(temp_file_name)
         job = client.submit_job_local_file(temp_file_name)
         wait_for_job_finish(client, job.id)
 
