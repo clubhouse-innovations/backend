@@ -26,6 +26,7 @@ def extract_doc_api():
     try:
         recording_file = request.files['recording_file']
         email = request.form['email_address']
+        print(f'Got a new request for email {email}')
         trans_results = transcribe_rev_ai(recording_file)
         upload_transcription(f'{email}_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}', trans_results)
     except Exception as ex:
