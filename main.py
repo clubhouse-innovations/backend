@@ -1,10 +1,11 @@
 import http
+import json
 from datetime import datetime
 
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 
-from s3_helper import upload_transcription
+from s3_helper import upload_transcription, read_session_files
 from transcribe import transcribe_rev_ai
 
 app = Flask(__name__)
@@ -35,6 +36,13 @@ def extract_doc_api():
 
     print(f'Finished processing request for {email}')
     return 'OK'
+
+
+@app.route('/get-recording-sessions', methods=['GET'])
+@cross_origin(allow_headers=['Content-Type'])
+def get_data():
+    sessions = read_session_files()
+    return json.dumps(sessions)
 
 
 if __name__ == "__main__":

@@ -21,3 +21,21 @@ def upload_to_s3(data, dir_name, file_name, extension, is_public=False):
 def upload_transcription(session_name, transcription_results: TranscriptionResult):
     upload_to_s3(transcription_results.full_text, session_name, 'full_text', 'txt', True)
     upload_to_s3(transcription_results.speakers_json, session_name, 'transcription_speakers', 'json', True)
+
+
+def read_session_files():
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(S3_DOCS_BUCKET)
+    sessions = {}
+    for key in bucket.objects.all():
+        file_name = key.key
+        sessions_id = file_name.split('/')[0]
+        if sessions_id not in sessions:
+            sessions[sessions_id] = {}
+
+        if 'full_text' in file_name:
+            sessions[sessions_id]['full_text'] = key.get()['Body'].read().decode('utf-8')
+        elif 'transcription_speakers' in file_name:
+            sessions[sessions_id]['transcription_speakers'] = key.get()['Body'].read().decode('utf-8')
+
+    return sessions
