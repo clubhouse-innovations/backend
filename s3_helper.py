@@ -24,7 +24,7 @@ def upload_transcription(session_name, transcription_results: TranscriptionResul
 
 
 def read_session_files():
-    s3 = boto3.resource('s3')
+    s3 = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
     bucket = s3.Bucket(S3_DOCS_BUCKET)
     sessions = {}
     for key in bucket.objects.all():
