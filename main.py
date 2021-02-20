@@ -57,6 +57,8 @@ def get_data():
 def get_data_for_session():
     session_id = request.args.get('session_id')
     session = read_session_files(session_id)
+    if session_id not in session:
+        return f"Session id {session_id} doesn't exist", 400
     return json.dumps(session[session_id])
 
 
