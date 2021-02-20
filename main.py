@@ -33,6 +33,7 @@ def extract_doc_api():
         print(f'Error while processing request [{ex}]')
         return "General error. We're about to fire someone.", 500
 
+    print(f'Finished processing request for {email}')
     return 'OK'
 
 
