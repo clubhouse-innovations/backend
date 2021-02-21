@@ -34,15 +34,17 @@ def read_session_files(filter_phrase=None):
         if filter_phrase and filter_phrase not in file_name:
             continue
 
-        sessions_id = file_name.split('/')[0]
-        if sessions_id not in sessions:
-            sessions[sessions_id] = {}
+        session_id = file_name.split('/')[0]
+        if '_' in session_id:
+            session_id = session_id.split('_')[1]
+        if session_id not in sessions:
+            sessions[session_id] = {'created_date': key.last_modified.strftime("%d-%m-%YT%H:%M:%SZ")}
 
         if 'full_text' in file_name:
-            sessions[sessions_id]['full_text'] = key.get()['Body'].read().decode('utf-8')
+            sessions[session_id]['full_text'] = key.get()['Body'].read().decode('utf-8')
         elif 'transcription_speakers' in file_name:
-            sessions[sessions_id]['transcription_speakers'] = key.get()['Body'].read().decode('utf-8')
+            sessions[session_id]['transcription_speakers'] = key.get()['Body'].read().decode('utf-8')
         elif 'recording' in file_name:
-            sessions[sessions_id]['recording_url'] = f'https://{S3_DOCS_BUCKET}.s3.amazonaws.com/{file_name}'
+            sessions[session_id]['recording_url'] = f'https://{S3_DOCS_BUCKET}.s3.amazonaws.com/{file_name}'
 
     return sessions

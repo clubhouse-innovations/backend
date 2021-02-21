@@ -65,10 +65,14 @@ def get_data_for_session():
 
 @app.route('/get-user-data', methods=['GET'])
 @cross_origin(allow_headers=['Content-Type'])
-def get_data_for_email():
+def get_user_data():
     email = request.args.get('email')
-    sessions = read_session_files(email)
-    return jsonify(list(sessions.values()))
+    result = []
+    for session_id, data in read_session_files(email).items():
+        data['session_id'] = session_id
+        result.append(data)
+
+    return jsonify(result)
 
 
 if __name__ == "__main__":

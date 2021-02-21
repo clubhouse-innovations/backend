@@ -6,7 +6,7 @@ def generate_email_body(email_address, session_id):
     body = f'''
 Hey there,
 
-You can view your analytics here {FRONTEND_URL}/recording?session_id={session_id}
+You can view your analytics here {FRONTEND_URL}/recording/:{session_id}
 
 Cheers,
 Your Clubcord team
