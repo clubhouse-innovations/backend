@@ -18,10 +18,10 @@ def upload_to_s3(data, dir_name, file_name, extension, is_public=False):
         print(f'Error when uploading {file_name}. Error [{ex}]')
 
 
-def upload_transcription(session_name, transcription_results: TranscriptionResult, rec_file_name):
-    upload_to_s3(transcription_results.full_text, session_name, 'full_text', 'txt', True)
-    upload_to_s3(transcription_results.speakers_json, session_name, 'transcription_speakers', 'json', True)
-    upload_to_s3(open(rec_file_name, 'rb').read(), session_name, 'recording', 'wav', True)
+def upload_transcription(dir_name, transcription_results: TranscriptionResult, rec_file_name):
+    upload_to_s3(transcription_results.full_text, dir_name, 'full_text', 'txt', True)
+    upload_to_s3(transcription_results.speakers_json, dir_name, 'transcription_speakers', 'json', True)
+    upload_to_s3(open(rec_file_name, 'rb').read(), dir_name, 'recording', 'wav', True)
 
 
 def read_session_files(filter_phrase=None):

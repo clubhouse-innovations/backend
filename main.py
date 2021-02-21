@@ -2,7 +2,7 @@ import json
 import os
 import uuid
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
 from email_sender import send_email
@@ -33,7 +33,8 @@ def process_recording():
         print(f'Got a new request for email {email}. Assigned {session_id} as the session id')
         recording_file.save(temp_rec_file_name)
         trans_results = transcribe_rev_ai(temp_rec_file_name)
-        upload_transcription(session_id, trans_results, temp_rec_file_name)
+        s3_dir_name = f'{email}_{session_id}'
+        upload_transcription(s3_dir_name, trans_results, temp_rec_file_name)
     except Exception as ex:
         os.remove(temp_rec_file_name)
         print(f'Error while processing request [{ex}]')
@@ -60,6 +61,14 @@ def get_data_for_session():
     if session_id not in session:
         return f"Session id {session_id} doesn't exist", 400
     return json.dumps(session[session_id])
+
+
+@app.route('/get-user-data', methods=['GET'])
+@cross_origin(allow_headers=['Content-Type'])
+def get_data_for_email():
+    email = request.args.get('email')
+    sessions = read_session_files(email)
+    return jsonify(list(sessions.values()))
 
 
 if __name__ == "__main__":
