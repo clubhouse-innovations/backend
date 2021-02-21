@@ -38,7 +38,7 @@ def read_session_files(filter_phrase=None):
         if '_' in session_id:
             session_id = session_id.split('_')[1]
         if session_id not in sessions:
-            sessions[session_id] = {'created_date': key.last_modified.strftime("%d-%m-%yT%H:%M:%SZ")}
+            sessions[session_id] = {'created_date': key.last_modified.strftime("%m-%d-%yT%H:%M:%SZ")}
 
         if 'full_text' in file_name:
             sessions[session_id]['full_text'] = key.get()['Body'].read().decode('utf-8')
