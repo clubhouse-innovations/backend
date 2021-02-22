@@ -8,28 +8,6 @@ from flask_cors import CORS, cross_origin
 from email_sender import send_email
 from s3_helper import read_session_files, upload_transcription
 from transcribe import transcribe_rev_ai
-from logging.config import dictConfig
-
-dictConfig(
-    {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "default": {
-                "format": "[%(asctime)s] [%(process)d] [%(levelname)s] in %(module)s: %(message)s",
-                "datefmt": "%Y-%m-%d %H:%M:%S %z"
-            }
-        },
-        "handlers": {
-            "wsgi": {
-                "class": "logging.StreamHandler",
-                "stream": "ext://flask.logging.wsgi_errors_stream",
-                "formatter": "default",
-            }
-        },
-        "root": {"level": "DEBUG", "handlers": ["wsgi"]},
-    }
-)
 
 app = Flask(__name__)
 CORS(app)
