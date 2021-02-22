@@ -77,7 +77,7 @@ def get_user_data():
 
 @app.route('/test-app', methods=['GET'])
 @cross_origin(allow_headers=['Content-Type'])
-def get_user_data():
+def test_app_endpoint():
     return "you shouldn't be here"
 
 
