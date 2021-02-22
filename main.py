@@ -75,5 +75,11 @@ def get_user_data():
     return jsonify(result)
 
 
+@app.route('/test-app', methods=['GET'])
+@cross_origin(allow_headers=['Content-Type'])
+def get_user_data():
+    return "you shouldn't be here"
+
+
 if __name__ == "__main__":
     run_app()
