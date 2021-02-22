@@ -18,10 +18,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 cors = CORS(app)
 
 
-def run_app():
-    app.run(host='0.0.0.0', port=8080)
-
-
 @app.route('/process-recording', methods=['POST'])
 @cross_origin(allow_headers=['Content-Type'])
 def process_recording():
@@ -82,4 +78,4 @@ def test_app_endpoint():
 
 
 if __name__ == "__main__":
-    run_app()
+    app.run(host='0.0.0.0', port=8080)
